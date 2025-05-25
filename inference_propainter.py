@@ -172,11 +172,57 @@ def get_ref_index(mid_neighbor_id, neighbor_ids, length, ref_stride=10, ref_num=
                 ref_index.append(i)
     return ref_index
 
+def compare_videos(video_path_1, video_path_2):
+    cap1 = cv2.VideoCapture(video_path_1)
+    cap2 = cv2.VideoCapture(video_path_2)
+
+    frame_count = 0
+    total_diff_pixels = 0
+    total_pixels = 0
+
+    print(f'\nComparing videos:\n {video_path_1}\n {video_path_2}\n')
+
+    while True:
+        ret1, frame1 = cap1.read()
+        ret2, frame2 = cap2.read()
+
+        if not ret1 or not ret2:
+            break
+
+        if frame1.shape != frame2.shape:
+            print(f'Frame {frame_count} sizes do not match: {frame1.shape} vs {frame2.shape}')
+            continue
+
+        diff = cv2.absdiff(frame1, frame2)
+        diff_pixels = np.sum(np.any(diff != 0, axis=2))
+        pixels_per_frame = diff.shape[0] * diff.shape[1]
+
+        diff_percent = (diff_pixels / pixels_per_frame) * 100
+
+        print(f'Frame {frame_count}: {diff_pixels} pixels differ ({diff_percent:.2f}%)')
+
+        total_diff_pixels += diff_pixels
+        total_pixels += pixels_per_frame
+        frame_count += 1
+
+    cap1.release()
+    cap2.release()
+
+    if frame_count == 0:
+        print('No frames compared.')
+        return
+
+    avg_diff_percent = (total_diff_pixels / total_pixels) * 100
+    print(f'\nSummary: {total_diff_pixels} pixels differ in total '
+          f'({avg_diff_percent:.2f}% average difference across {frame_count} frames)')
 
 
 if __name__ == '__main__':
-    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    device = get_device()
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    #device = get_device()
+
+    if device == "cpu":
+        print("GPU not found. Using CPU instead.")
     
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -473,4 +519,6 @@ if __name__ == '__main__':
     
     print(f'\nAll results are saved in {save_root}')
     
+    compare_videos('first_results/bmx-trees/inpaint_out.mp4', 'results/bmx-trees/inpaint_out.mp4')
+
     torch.cuda.empty_cache()
