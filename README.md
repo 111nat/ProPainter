@@ -12,3 +12,5 @@ docker build -t propainter-gpu .
 или  
 
 `docker run --gpus all --rm -it -v $(pwd)/results:/app/results propainter-gpu`  
+  
+должна появиться папка results в папке ProPainter
