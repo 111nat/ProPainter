@@ -8,7 +8,6 @@ dependencies:
   - bzip2=1.0.8
   - ca-certificates=2025.2.25
   - cuda-cccl=12.9.27
-  - cuda-cccl_win-64=12.9.27
   - cuda-cudart=12.1.105
   - cuda-cudart-dev=12.1.105
   - cuda-cupti=12.1.105
@@ -23,7 +22,6 @@ dependencies:
   - cuda-runtime=12.1.0
   - cuda-version=12.9
   - intel-openmp=2023.1.0
-  - khronos-opencl-icd-loader=2024.05.08
   - libcublas=12.1.0.26
   - libcublas-dev=12.1.0.26
   - libcufft=11.0.2.4
@@ -59,8 +57,6 @@ dependencies:
   - tk=8.6.14
   - typing_extensions=4.12.2
   - tzdata=2025b
-  - vc=14.42
-  - vs2015_runtime=14.42.34433
   - wheel=0.45.1
   - xz=5.6.4
   - zlib=1.2.13
@@ -105,8 +101,9 @@ dependencies:
       - tifffile==2025.5.10
       - timm==1.0.15
       - tomli==2.2.1
-      - torch==2.7.0
-      - torchvision==0.17.2+cu121
+      - torch==2.2.2
+      - --extra-index-url https://download.pytorch.org/whl/cu121
+      - torchvision==0.17.2
       - tqdm==4.67.1
       - typing-extensions==4.13.2
       - urllib3==2.4.0
