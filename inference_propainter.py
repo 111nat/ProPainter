@@ -172,7 +172,10 @@ def get_ref_index(mid_neighbor_id, neighbor_ids, length, ref_stride=10, ref_num=
                 ref_index.append(i)
     return ref_index
 
-def compare_videos(video_path_1, video_path_2):
+def compare_videos(video_path_1, video_path_2, threshold=5):
+    import cv2
+    import numpy as np
+
     cap1 = cv2.VideoCapture(video_path_1)
     cap2 = cv2.VideoCapture(video_path_2)
 
@@ -194,7 +197,9 @@ def compare_videos(video_path_1, video_path_2):
             continue
 
         diff = cv2.absdiff(frame1, frame2)
-        diff_pixels = np.sum(np.any(diff != 0, axis=2))
+        diff_gray = np.mean(diff, axis=2)
+
+        diff_pixels = np.sum(diff_gray > threshold)
         pixels_per_frame = diff.shape[0] * diff.shape[1]
 
         diff_percent = (diff_pixels / pixels_per_frame) * 100
@@ -214,7 +219,9 @@ def compare_videos(video_path_1, video_path_2):
 
     avg_diff_percent = (total_diff_pixels / total_pixels) * 100
     print(f'\nSummary: {total_diff_pixels} pixels differ in total '
-          f'({avg_diff_percent:.2f}% average difference across {frame_count} frames)')
+          f'({avg_diff_percent:.4f}% average difference across {frame_count} frames) '
+          f'with threshold={threshold}')
+
 
 
 if __name__ == '__main__':
